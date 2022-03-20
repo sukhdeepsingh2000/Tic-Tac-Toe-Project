@@ -26,7 +26,7 @@ var tictactoe = (function() {
         console.log('client connection');
 
         connection.on('text', manageMessage);
-        connection.on('close', function(){manageClose(this);});
+        connection.on('close', function() { manageClose(this); });
 
         var player = new Player(connection);
 
@@ -56,7 +56,7 @@ var tictactoe = (function() {
     }
 
     function manageClose(connection) {
-        console.log('connection close');
+        console.log('connection has been closed');
 
         connection.player.game.onPlayerQuit(connection.player);
     }
