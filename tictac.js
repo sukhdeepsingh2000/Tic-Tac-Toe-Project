@@ -3,6 +3,8 @@
 var Player = require('./player').Player;
 var Game = require('./game').Game;
 
+
+//Creating a game method
 var tictactoe = (function() {
 
     var games = [];

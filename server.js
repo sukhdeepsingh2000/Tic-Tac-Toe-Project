@@ -1,9 +1,12 @@
 var fs = require('fs');
 
-function onRequest(request, response)
-{
+
+//Method top handle the request for server
+
+function onRequestMethod(request, response) {
     if (request.url != '/') {
-        fs.readFile('./front/'+request.url, function(err, data) {
+        fs.readFile('./front/' + request.url, function(err, data) {
+            //Handling the error condition
             if (err) {
                 response.writeHead(404);
                 response.end();
@@ -12,12 +15,12 @@ function onRequest(request, response)
             }
         });
     } else {
-        fs.readFile('front/index.html', function (err, data) {
+        fs.readFile('front/index.html', function(err, data) {
             if (err) {
                 response.writeHead(404);
                 response.end();
             } else {
-                response.writeHead({'Content-Type': 'text/html'});
+                response.writeHead({ 'Content-Type': 'text/html' });
                 response.write(data);
                 response.end();
             }
@@ -26,4 +29,5 @@ function onRequest(request, response)
     }
 }
 
-exports.onRequest = onRequest;
+//Exporting the modul
+exports.onRequest = onRequestMethod;

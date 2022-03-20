@@ -1,6 +1,7 @@
 "use strict";
 
-var Player = function(connection) {
+//Creating a method for player's game
+var PlayerObject = function(connection) {
     connection.player = this;
     this.connection = connection;
 
@@ -10,16 +11,16 @@ var Player = function(connection) {
     this.shape = null;
 };
 
-Player.prototype.sendData = function(message) {
+PlayerObject.prototype.sendData = function(message) {
     if (typeof message == 'object') {
         message = JSON.stringify(message);
     }
     this.connection.sendText(message);
 };
 
-Player.prototype.sendMessage = function(message) {
-    var json = {'type':'message', 'text':message};
+PlayerObject.prototype.sendMessage = function(message) {
+    var json = { 'type': 'messageGame', 'text': message };
     this.sendData(json);
 };
 
-exports.Player = Player;
+exports.Player = PlayerObject;
