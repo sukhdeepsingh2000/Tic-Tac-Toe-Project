@@ -1,5 +1,6 @@
 "use strict";
 
+//Creating HTTP object
 var http = require('http'),
     ws = require('nodejs-websocket'),
     server = require('./server'),

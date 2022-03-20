@@ -1,6 +1,7 @@
 "use strict";
 
-var Game = function() {
+//Creating a new game object 
+var GameObj = function() {
     this.indexes = [0, 1];
     this.colors = ['blue', 'red'];
     this.shapes = ['cross', 'circle'];
@@ -10,58 +11,61 @@ var Game = function() {
 
     this.players = [];
 };
-Game.prototype.newPlayer = function(player) {
+GameObj.prototype.newPlayer = function(player) {
     if (this.indexes.length == 0) {
         return false;
     }
     var index = this.indexes.shift();
 
     player.index = index;
-    player.game = this;
+    player.GameObj = this;
     player.color = this.colors.shift();
     player.shape = this.shapes.shift();
     this.players[index] = player;
 
-    var initMessage = {'type':'connection', 'index':index, 'players':this.getPlayersData()};
+    var initMessage = { 'type': 'connection', 'index': index, 'players': this.getPlayersData() };
     player.sendData(initMessage);
-    this.broadcast({'type':'newplayer', 'index':index, 'players':this.getPlayersData()});
+    this.broadcast({ 'type': 'newplayer', 'index': index, 'players': this.getPlayersData() });
 
     if (this.indexes.length == 0) {
         this.start();
     } else {
-        this.broadcast({'type':'message', 'text':'Waiting for another player...'});
+        this.broadcast({ 'type': 'message', 'text': 'Waiting for another player...' });
     }
 
     return true;
 };
 
-Game.prototype.getPlayersData = function() {
+GameObj.prototype.getPlayersData = function() {
     var data = [];
     for (var i in this.players) {
         if (this.players[i] != null && this.players.hasOwnProperty(i)) {
-            data[i] = {color:this.players[i].color, shape:this.players[i].shape};
+            data[i] = { color: this.players[i].color, shape: this.players[i].shape };
         }
     }
     return data;
 };
 
-Game.prototype.start = function() {
+GameObj.prototype.start = function() {
     this.running = true;
     this.nextTurn = 0;
-    this.grid = [[-1, -1, -1], [-1, -1, -1], [-1, -1,-1]];
+    this.grid = [
+        [-1, -1, -1],
+        [-1, -1, -1],
+        [-1, -1, -1]
+    ];
 
-    var message = {'type':'newgame', 'next':this.nextTurn};
+    var message = { 'type': 'newGameObj', 'next': this.nextTurn };
     this.broadcast(message);
 };
 
-Game.prototype.hasFreeSlot = function() {
+GameObj.prototype.hasFreeSlot = function() {
     return this.indexes.length > 0;
 };
 
-Game.prototype.processMove = function (coords, player)
-{
+GameObj.prototype.processMove = function(coords, player) {
     if (!this.running) {
-        player.sendMessage('The game did not begin yet.');
+        player.sendMessage('The GameObj did not begin yet.');
         return;
     }
     if (this.nextTurn != player.index) {
@@ -76,16 +80,16 @@ Game.prototype.processMove = function (coords, player)
 
         var win = checkWin(this.grid);
         var message = {
-            'type':'move',
-            'coords':coords,
-            'index':player.index,
-            'next':this.nextTurn,
-            'win':win
+            'type': 'move',
+            'coords': coords,
+            'index': player.index,
+            'next': this.nextTurn,
+            'win': win
         };
         this.broadcast(message);
 
         if (win != -1) {
-            this.endGame('Player '+win+' win.');
+            this.endGameObj('Player ' + win + ' win.');
         }
 
     } else {
@@ -93,9 +97,9 @@ Game.prototype.processMove = function (coords, player)
     }
 };
 
-Game.prototype.onPlayerQuit = function(player) {
+GameObj.prototype.onPlayerQuit = function(player) {
     var index = player.index;
-    player.game = null;
+    player.GameObj = null;
 
     this.colors.push(player.color);
     this.shapes.push(player.shape);
@@ -104,16 +108,16 @@ Game.prototype.onPlayerQuit = function(player) {
 
     this.indexes.push(index);
 
-    this.endGame('The player '+ index + 'quit the game.');
+    this.endGameObj('The player ' + index + 'quit the GameObj.');
 };
 
-Game.prototype.endGame = function(reason) {
+GameObj.prototype.endGameObj = function(reason) {
     this.nextTurn = -1;
     this.running = false;
 
-    this.broadcast({'type':'endgame', 'text':reason});
+    this.broadcast({ 'type': 'endGameObj', 'text': reason });
 };
-Game.prototype.broadcast = function(message) {
+GameObj.prototype.broadcast = function(message) {
     for (var i = 0; i < this.players.length; i++) {
         if (this.players[i] != null) {
             this.players[i].sendData(message);
@@ -121,8 +125,7 @@ Game.prototype.broadcast = function(message) {
     }
 };
 
-function checkWin(grid)
-{
+function checkWin(grid) {
     var current = -1;
     // check columns
     for (var i = 0; i < grid.length; i++) {
@@ -197,4 +200,4 @@ function checkWin(grid)
     return -1;
 }
 
-exports.Game = Game;
+exports.GameObj = GameObj;
