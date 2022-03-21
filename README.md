@@ -38,3 +38,5 @@ node index.js<br><br>
 * Modification
 * Patent use
 * Private use
+
+This license is used for public related software components.
